@@ -334,6 +334,7 @@ textarea{resize:vertical;min-height:70px;font-weight:500;line-height:1.4}
 .codebox{margin:0;font:500 10.5px/1.35 ui-monospace,monospace;color:var(--muted);word-break:break-all;background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:8px;max-height:80px;overflow:auto;user-select:text;-webkit-user-select:text}
 a.btn-sec.dl{display:block;text-align:center;text-decoration:none;color:var(--ink)}
 .vbox{border-radius:16px;overflow:hidden;border:2px solid var(--ol);background:#000}.vbox video{display:block;width:100%;max-height:44vh;object-fit:cover}
+.inapp{margin:0;padding:9px 11px;border-radius:12px;background:#d9913f22;border:2px solid #d9913f66;color:#8a5a1f;font-weight:700;font-size:13.5px;line-height:1.45}
 .impmsg{margin:0;text-align:center;font-weight:700;color:var(--roseD);min-height:1em}
 .card.preview{max-width:none}
 .slot{display:grid;grid-template-columns:42px 1fr;gap:6px 10px;align-items:center;padding:10px 11px;border-radius:16px;background:var(--panel);border:2px solid var(--line)}
@@ -404,7 +405,7 @@ a.btn-sec.dl{display:block;text-align:center;text-decoration:none;color:var(--in
     <div class="menu-in">
       <div>
         <p class="eyebrow">Game giải đố tình yêu</p>
-        <h1 class="logo">Gì Cũng <em>Được!</em><sup>v1.4</sup></h1>
+        <h1 class="logo">Gì Cũng <em>Được!</em><sup>v1.4.3</sup></h1>
         <p class="tag">Người yêu bảo "gì cũng được". Nhưng chọn sai là có chuyện đó.</p>
       </div>
       <div class="grid2">
@@ -421,13 +422,6 @@ a.btn-sec.dl{display:block;text-align:center;text-decoration:none;color:var(--in
       </div>
       <div class="field"><span class="lbl">Cách nói chuyện của người yêu</span><div class="opts2" id="personas"></div></div>
       <div class="field"><span class="lbl">Độ khó</span><div class="opts3" id="diffs"></div></div>
-      <ul class="how">
-        <li>Đáp án đúng phải hợp với mọi điều: sổ tay, tâm trạng, thời tiết, gợi ý.</li>
-        <li>Tra Bách khoa để biết món nào có hành, cay, béo… Ô ○ là có thể bỏ ra.</li>
-        <li>Thiện cảm cao thì được "dỗi ngược" khi lỡ trả lời sai câu khẩn cấp.</li>
-        <li>Nhớ ngày lễ và sinh nhật người yêu. Quên là giận to.</li>
-        <li>Muốn cưới: qua ngày 365, có nhẫn đính hôn và được bố mẹ duyệt.</li>
-      </ul>
       <div class="row" id="contRow" hidden>
         <button class="btn-main alt cont" id="btnCont" style="flex:1">Chơi tiếp<small id="contLbl"></small></button>
         <button class="btn-sec xdel" id="btnContDel" aria-label="Xóa bản lưu">Xóa</button>
@@ -2497,7 +2491,9 @@ function extractCode(txt){
   return null;
 }
 /* Trong link, dữ liệu sau #p= đã gồm tag nén ở ký tự đầu */
-function linkFor(kind,code){const base=(save.shareBase||'').trim();return base?base.replace(/#.*$/,'')+'#'+kind+'='+code.slice(1):''}
+const DEFAULT_BASE='https://thanhtrong2k.github.io/gicungduoc/';
+const IN_APP=/Zalo|FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\//i.test(navigator.userAgent||'');
+function linkFor(kind,code){const base=(save.shareBase||DEFAULT_BASE).trim();return base?base.replace(/#.*$/,'')+'#'+kind+'='+code.slice(1):''}
 
 /* ---------- Hồ sơ người yêu thật ---------- */
 function blankProfile(){return{v:1,n:'',g:'F',xe:'em',xa:'anh',b:'',k:'',h:'long',c:0,gl:0,t:'n'.repeat(TKEYS.length),f:[],x:[],p:'nhongnheo',la:['','',''],lg:['','',''],m:{bd:'',an:'',wd:'',y1:'',lo:''}}}
@@ -2618,9 +2614,11 @@ const FEATS={
 };
 const BASICS=[
  ['Mục tiêu','Người yêu nói "gì cũng được", bạn phải chọn đúng thứ họ thật sự muốn. Sai là cãi nhau, mất 1 mạng.'],
+ ['Chọn đáp án','Đáp án đúng phải hợp với MỌI điều: sổ tay, tâm trạng, thời tiết, lời gợi ý hôm đó.'],
  ['Đọc tin nhắn','Tin nhắn mỗi sáng có gợi ý: tâm trạng, thời tiết, món đang thèm.'],
  ['Sổ tay','Ghi lại điều người yêu kỵ. Sổ có 4 dòng, đầy thì thay dòng cũ. Người yêu thay đổi theo thời gian!'],
  ['Bách khoa','Tra món nào có hành, cay, béo… Ô ✓ là có, ô ○ là có nhưng bỏ ra được (không tính là sai).'],
+ ['Ngày lễ & sinh nhật','Nhớ ngày lễ và sinh nhật người yêu, mang quà đúng dịp. Quên là giận to.'],
  ['Cưới','Qua ngày 365, có nhẫn đính hôn và được bố mẹ duyệt.']
 ];
 function tutOn(){return!save.tut.skip&&S.alive&&S.day<=2}
@@ -2705,9 +2703,9 @@ async function openShare(kind,obj,name){
     if(ok){const im=document.createElement('img');im.src=cv.toDataURL('image/png');im.alt='Mã QR';qb.replaceChild(im,cv);const tip=document.createElement('p');tip.className='center-p small';tip.textContent='Mẹo: nhấn giữ ảnh QR để lưu vào máy.';b.insertBefore(tip,note)}
     if(ok&&!inFrame){const dl=document.createElement('a');dl.className='btn-sec dl';dl.textContent='Lưu ảnh QR';dl.download='gicungduoc-'+(kind==='p'?'hoso':'ketqua')+'-'+(name||'').replace(/\s+/g,'_')+'.png';dl.href=cv.toDataURL('image/png');b.appendChild(dl)}
     if(kind==='p'){const t=document.createElement('button');t.className='btn-sec';t.textContent='Lưu vào máy này để tự chơi thử';t.onclick=()=>{const r=addProfileSlot(obj);t.textContent=r?'Đã lưu vào "Người yêu thật"':'Hết ô lưu (tối đa '+MAX_PROFILE_SLOTS+')';t.disabled=true};b.appendChild(t)}
-    const f=document.createElement('div');f.className='field';f.innerHTML='<label>Địa chỉ web của game (không bắt buộc)</label>';
-    const inp=document.createElement('input');inp.type='text';inp.placeholder='https://ten-ban.github.io/gicungduoc/';inp.value=save.shareBase||'';
-    inp.onchange=()=>{const v=inp.value.trim();if(v&&!/^https?:\/\//i.test(v)){inp.value='';return}save.shareBase=v;persist();render()};f.appendChild(inp);b.appendChild(f);
+    const f=document.createElement('div');f.className='field';f.innerHTML='<label>Địa chỉ web của game (đã điền sẵn, thường không cần sửa)</label>';
+    const inp=document.createElement('input');inp.type='text';inp.placeholder=DEFAULT_BASE;inp.value=save.shareBase||DEFAULT_BASE;
+    inp.onchange=()=>{const v=inp.value.trim();if(v&&!/^https?:\/\//i.test(v)){inp.value=save.shareBase||DEFAULT_BASE;return}save.shareBase=v&&v!==DEFAULT_BASE?v:'';persist();render()};f.appendChild(inp);b.appendChild(f);
     const cd=document.createElement('p');cd.className='codebox';cd.textContent=code;b.appendChild(cd);
   };
   render();$('#share').hidden=false;sfx.tap();
@@ -2740,11 +2738,13 @@ async function handleScan(txt,msg){
   go.onclick=()=>{const s=addProfileSlot(pr);if(!s)return;$('#imp').hidden=true;renderReal();$('#real').hidden=true;startRun(s.id,false)};
   const later=document.createElement('button');later.className='btn-sec';later.textContent='Chỉ lưu, chơi sau';later.disabled=full;
   later.onclick=()=>{if(addProfileSlot(pr)){$('#imp').hidden=true;renderReal();$('#real').hidden=false}};
+  if(IN_APP){const iw=document.createElement('p');iw.className='inapp';iw.textContent='Bạn đang mở game bên trong Zalo/Facebook. Hồ sơ sẽ chỉ lưu trong trình duyệt của app đó. Để lưu lâu dài: bấm ⋮ hoặc ··· ở góc trên → "Mở bằng trình duyệt", rồi quét lại.';c.appendChild(iw)}
   c.appendChild(go);c.appendChild(later);b.appendChild(c);sfx.ok();
 }
 function renderImport(){
   const b=$('#impBody');b.innerHTML='';
   const p=document.createElement('p');p.className='center-p';p.textContent='Quét QR người yêu gửi, chọn ảnh QR đã lưu từ Zalo, hoặc dán link / mã.';b.appendChild(p);
+  if(IN_APP){const iw=document.createElement('p');iw.className='inapp';iw.textContent='Bạn đang mở game bên trong Zalo/Facebook. Hồ sơ sẽ chỉ lưu trong trình duyệt của app đó. Để lưu lâu dài: bấm ⋮ hoặc ··· ở góc trên → "Mở bằng trình duyệt", rồi quét lại.';b.appendChild(iw)}
   const msg=document.createElement('p');msg.className='impmsg';
   const g=document.createElement('div');g.className='g2';
   const cam=document.createElement('button');cam.className='btn-main alt';cam.textContent='Quét bằng camera';
@@ -2800,7 +2800,7 @@ $('#realImport').onclick=()=>openImport();
 /* ---------- Trình tạo hồ sơ (6 bước) ---------- */
 let W=null,wStep=0;
 const WSTEPS=['Thông tin cơ bản','Ngoại hình','Tính cách & khẩu vị','Món ruột & món ghét','Cách nói chuyện','Lời nhắn bí mật'];
-const XH=[['em','anh'],['anh','em'],['em','chồng'],['vợ','chồng'],['tớ','cậu'],['mình','bạn']];
+const XH=[['em','anh'],['anh','em'],['em','chị'],['chị','em'],['em','chồng'],['vợ','chồng'],['tớ','cậu'],['mình','bạn']];
 function wField(label,el,hint){const f=document.createElement('div');f.className='field';const l=document.createElement('label');l.textContent=label;f.appendChild(l);f.appendChild(el);if(hint){const h=document.createElement('small');h.className='hint';h.textContent=hint;f.appendChild(h)}return f}
 function wInput(val,max,ph,on){const i=document.createElement('input');i.type='text';i.maxLength=max;i.value=val||'';if(ph)i.placeholder=ph;i.oninput=()=>on(i.value);return i}
 function wArea(val,max,ph,on){const i=document.createElement('textarea');i.maxLength=max;i.rows=3;i.value=val||'';if(ph)i.placeholder=ph;const c=document.createElement('small');c.className='cnt';const upd=()=>c.textContent=i.value.length+'/'+max;upd();i.oninput=()=>{on(i.value);upd()};const w=document.createElement('div');w.className='areaw';w.appendChild(i);w.appendChild(c);return w}
