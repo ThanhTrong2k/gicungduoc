@@ -72,8 +72,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-
 .chip{padding:1px 8px;border-radius:99px;background:#d9913f22;color:#9a5f1f;font-weight:700;font-size:11.5px;white-space:nowrap}
 .chip.uni{background:#5f9f7e22;color:var(--mintD)}
 .aff{display:flex;align-items:center;gap:4px;margin-left:auto;font-weight:700;color:var(--roseD);font-variant-numeric:tabular-nums}
-.aff i{display:block;width:44px;height:7px;border-radius:9px;background:#e0707a2e;overflow:hidden;position:relative}
+.aff i{display:block;width:36px;height:7px;border-radius:9px;background:#e0707a2e;overflow:hidden;position:relative}
 .aff i::after{content:'';position:absolute;inset:0;width:var(--w,40%);background:var(--rose);border-radius:9px;transition:width .5s}
+.kn{display:flex;align-items:center;gap:2px;font-size:12px;font-weight:700;color:#8a6a2a;font-variant-numeric:tabular-nums}
+.kn i{display:block;width:30px;height:7px;border-radius:9px;background:#d9913f2e;overflow:hidden;position:relative}
+.kn i::after{content:'';position:absolute;inset:0;width:var(--w,80%);background:#d9a13f;border-radius:9px;transition:width .5s}
+.kn.low{color:var(--danger)}.kn.low i::after{background:var(--danger)}.kn.hid i::after{background:repeating-linear-gradient(90deg,#d9a13f55 0 4px,transparent 4px 8px)}
+.chip.st{background:#d9464f22;color:var(--danger)}
+@media (max-width:390px){#hud .r1,#hud .r2{gap:5px}#hud .chip{padding:1px 5px;font-size:11px}.kn i{width:18px}.aff i{width:22px}#hud .names{font-size:14px;gap:3px}#hLives svg{width:14px;height:14px}.clock{font-size:11.5px}}
+.wkfx{font-weight:700;color:var(--ink)!important}
 .money{font-weight:700;color:var(--mintD);font-variant-numeric:tabular-nums;white-space:nowrap}
 .money.neg{color:var(--danger)}
 .ibtn{width:30px;height:28px;border-radius:9px;border:2px solid var(--line);background:var(--panel2);display:grid;place-items:center;font:800 12px var(--fd);padding:0}
@@ -421,13 +428,14 @@ a.btn-sec.dl{display:block;text-align:center;text-decoration:none;color:var(--in
     <div class="r1">
       <div class="day"><small id="hPhase">Ngày</small><b id="hDay">1</b></div>
       <div class="names"><span id="hMe">Minh</span><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e0707a" d="M12 21s-7.5-4.6-9.5-9.3C1 8.2 3.2 4.5 6.8 4.5c2.1 0 3.6 1.1 4.2 2.3h2c.6-1.2 2.1-2.3 4.2-2.3 3.6 0 5.8 3.7 4.3 7.2C19.5 16.4 12 21 12 21z"/></svg><span id="hYou">Lan</span></div>
+      <span class="kn" id="hKnWrap" title="Kiên nhẫn" hidden>⏳<i id="hKnBar"></i><b id="hKn">80</b></span>
       <div class="lives" id="hLives" aria-label="Mạng"></div>
     </div>
     <div class="r2">
       <span class="clock" id="hClock">Tối · 18:30</span>
       <span class="chip" id="hMood" hidden></span>
       <span class="chip uni" id="hUni" hidden></span>
-      <span class="aff" title="Thiện cảm"><i id="hAffBar"></i><b id="hAff">40</b></span>
+      <span class="chip st" id="hStress" title="Căng thẳng cao: gợi ý khó hiểu hơn" hidden>😵</span><span class="aff" title="Thiện cảm"><i id="hAffBar"></i><b id="hAff">40</b></span>
       <span class="money" id="hMoney">2tr</span>
       <button class="ibtn" id="btnPause" aria-label="Tạm dừng">II</button>
     </div>
@@ -467,7 +475,7 @@ a.btn-sec.dl{display:block;text-align:center;text-decoration:none;color:var(--in
     <div class="menu-in">
       <div>
         <p class="eyebrow">Game giải đố tình yêu</p>
-        <h1 class="logo">Gì Cũng <em>Được!!!</em><sup>v1.5.6</sup></h1>
+        <h1 class="logo">Gì Cũng <em>Được!!!</em><sup>v1.6.0</sup></h1>
         <p class="tag">Người yêu bảo "gì cũng được". Nhưng chọn sai là có chuyện đó.</p>
       </div>
       <div class="row" id="contRow" hidden>
@@ -1548,7 +1556,7 @@ function updHUD(){
   $('#hClock').textContent=SLOTS[slotOf(S.clock)].name+' · '+fmtClock(S.clock)+(S.startDate?' · '+fmtDM(dateOf(S.day)):'');
   const mc=$('#hMood');if(S.mood&&S.diffId==='de'){mc.hidden=false;mc.textContent=S.mood.chip}else mc.hidden=true;
   const uc=$('#hUni');if(S.universe>1){uc.hidden=false;uc.textContent='#'+S.uniCode}else uc.hidden=true;
-  $('#hAffBar').style.setProperty('--w',S.aff+'%');$('#hAff').textContent=S.aff;
+  $('#hAffBar').style.setProperty('--w',S.aff+'%');$('#hAff').textContent=S.aff;updWorkHUD();
   const hm=$('#hMoney');hm.textContent=fmtS(save.money);hm.classList.toggle('neg',save.money<0);
   $('#iqN').textContent='×'+save.iq;$('#noteN').textContent=S.notes.length+'/'+save.slots;$('#encN').textContent=encCount();
 }
@@ -1704,7 +1712,7 @@ async function multiverse(){
    ========================================================= */
 function allBans(){const s=new Set(S.mood?S.mood.ban:[]);S.traits.forEach(t=>TRAITS[t].ban.forEach(b=>s.add(b)));return s}
 const viol=(o,set)=>o.m.some(t=>set.has(t));
-function clr(){return rand()<S.D.clear?0:1}
+function clr(){return rand()<S.D.clear*(S.work&&S.work.ct>=70?.5:1)?0:1}
 function hintLine(s){return T(PS().deco.hint(s))}
 function angryLine(s){return T(PS().deco.angry(s))}
 
@@ -2219,10 +2227,12 @@ async function playDate(){
     let bdayNote=false;
     if(!S.bdayHinted&&S.day>=S.bdayHintDay&&S.day<S.bday.day){S.bdayHinted=true;bdayNote=true;const bd=dateOf(S.bday.day);m.push(hintLine(clr()===0?'Sinh nhật {e} ngày '+fmtDM(bd)+' đó nha, nhớ đó!':'Sinh nhật {e} rơi vào tháng '+bd.m+' đó. Ngày nào thì {a} tự nhớ nha.'))}
     else if(!S.bdayHint2&&S.bday.day-S.day>=2&&S.bday.day-S.day<=10){S.bdayHint2=true;m.push(T('Sắp tới ngày quan trọng của {e} rồi đó. {A} nhớ không?'))}
+    {const knl=knLine();if(knl)m.push(knl)}
     m.push({inv:1});
     await phoneChat(m,{reply:1},msgMin);
     if(bdayNote)await offerNote('bday');
     await sideEvents();chk(id);
+    if(!S.today.skipped){await workDay();chk(id);if(!S.alive)return}
     if(S.today.skipped)return;
     await giftPrompt();chk(id);
     S.clock=dateMin;updHUD();
@@ -2245,6 +2255,7 @@ async function playDate(){
   }else{
     S.clock=dateMin;updHUD();
     await fadeTo(()=>{S.scene='home';S.homeVar=null});
+    await workDay();chk(id);if(!S.alive)return;
     await say('narr',T(pick({s:['Ngày '+S.day+'. Sáng cuối tuần, cả hai vừa thức dậy.','Ngày '+S.day+'. Nắng sớm lọt qua cửa sổ.'],t:['Ngày '+S.day+'. Trưa nghỉ, cả hai ở nhà.','Ngày '+S.day+'. Buổi trưa oi ả.'],o:['Ngày '+S.day+'. Cả hai vừa tan làm về nhà.','Ngày '+S.day+'. Đèn phố vừa lên.']}[S.slot])),{hold:500});chk(id);
     await say('you',T(pk('home',PS().home)),{hold:500});chk(id);
     if(S.mood){await say('you',hintLine(moodHint(S.mood)),{hold:600});chk(id)}
@@ -2308,7 +2319,7 @@ async function wedding(){
 async function endOfDay(){
   const id=RUN;
   await fadeTo(()=>{S.scene=S.married?'home':'room';S.homeVar=null;S.venue=null;S.clock=Math.max(S.clock,21*60+ri(0,50));S.expr='happy';S.meExpr=S.today.ended?'sad':'happy'});
-  const pay=S.married?350000:SALARY;save.money+=pay;persist();updHUD();
+  const pay=workPay();save.money+=pay;persist();updHUD();
   unlock('first');if(save.money>=5e7)unlock('rich');if(CATS.an.items.every(o=>save.enc[o.n]))unlock('encFood');
   if(S.married&&S.marriedDay){const md=S.day-S.marriedDay;if(md>=365&&!S.endY1){S.endY1=true;unlock('year1');await showEnding('y1');chk(id);await secret('y1');chk(id)}if(md>=1825&&!S.endY5){S.endY5=true;unlock('year5');await showEnding('y5');chk(id)}}
   $('#choices').innerHTML='';setSpeech('narr',T(S.married?'Tối muộn, cả hai chuẩn bị đi ngủ.':'{M} về tới nhà, nằm nghĩ lại buổi hẹn.'),true);
@@ -2316,13 +2327,13 @@ async function endOfDay(){
   for(;;){
     const r=await new Promise(res=>{
       const box=$('#dialog');box.innerHTML='';const c=document.createElement('div');c.className='card';
-      const t=S.today,title=t.skipped?'Bỏ hẹn đi nhậu':t.ended?'Về sớm vì cãi nhau':(t.total&&t.right===t.total?'Buổi hẹn trọn vẹn':'Một ngày bình thường');
+      const t=S.today,title=t.skipped?(t.workHuy?'Hủy hẹn vì công việc':'Bỏ hẹn đi nhậu'):t.ended?'Về sớm vì cãi nhau':(t.total&&t.right===t.total?'Buổi hẹn trọn vẹn':'Một ngày bình thường');
       c.innerHTML='<p class="eyebrow"></p><h2></h2>';c.children[0].textContent='Hết ngày '+S.day+' · '+fmtDM(dateOf(S.day));c.children[1].textContent=title;
       const ek=t.cgKey||(t.cgKey=endCG(t.skipped||t.ended?'cai':(t.total&&t.right===t.total?'vui':'thuong')));
       if(ek&&!t.cgSaved){t.cgSaved=1;album.push({cg:ek,name:title,day:S.day,who:S.me+' & '+S.you});if(album.length>40)album.shift();persistAlbum()}
       if(ek){const im=document.createElement('img');im.className='endphoto';cgFit(im,ek);im.src='art/'+ek+'.webp';im.alt='Tranh hôm nay';c.appendChild(im)}
       const st=document.createElement('div');
-      [['Đúng ý',t.right+'/'+t.total],['Thiện cảm',(t.aff>=0?'+':'')+t.aff+' → '+S.aff],['Chi tiêu',t.spent?'-'+fmtM(t.spent):'0đ'],['Lương hôm nay','+'+fmtM(pay)],['Tiền hiện có',fmtM(save.money)]].forEach(([a,b])=>{const d=document.createElement('div');d.className='stat';d.innerHTML='<span></span><b></b>';d.firstChild.textContent=a;d.lastChild.textContent=b;st.appendChild(d)});
+      [['Đúng ý',t.right+'/'+t.total],['Thiện cảm',(t.aff>=0?'+':'')+t.aff+' → '+S.aff],['Chi tiêu',t.spent?'-'+fmtM(t.spent):'0đ'],['Lương hôm nay','+'+fmtM(pay)],...workRows(),['Tiền hiện có',fmtM(save.money)]].forEach(([a,b])=>{const d=document.createElement('div');d.className='stat';d.innerHTML='<span></span><b></b>';d.firstChild.textContent=a;d.lastChild.textContent=b;st.appendChild(d)});
       c.appendChild(st);
       if(!S.married&&S.day>=365&&!save.ringE){const p=document.createElement('p');p.textContent='Đã hơn một năm. Muốn cưới cần Nhẫn đính hôn và được bố mẹ duyệt.';c.appendChild(p)}
       const go=document.createElement('button');go.className='btn-main';go.textContent='Ngày tiếp theo';go.onclick=()=>res('next');c.appendChild(go);
@@ -2343,7 +2354,7 @@ async function advanceDays(){
   const cur=S.day;let gap=S.married?ri(2,6):(cur<7?1:(cur<60?ri(1,3):ri(2,6)));
   for(const m of [100,200,300,365,500,730,1000,1095,1500,2000])if(cur<m&&cur+gap>=m){gap=m-cur;S.milestone=m;break}
   const evd=nextEventDay(cur,cur+gap-1);if(evd){gap=evd-cur;if(S.milestone&&S.milestone>cur+gap)S.milestone=null}
-  if(gap>1){await dayMontage(cur+1,cur+gap-1);save.money+=(gap-1)*(S.married?350000:SALARY);persist()}
+  if(gap>1){await dayMontage(cur+1,cur+gap-1);save.money+=(gap-1)*workPay();workIdle(gap-1);persist()}
   S.day=cur+gap;
   if(S.day>(save.best[S.diffId]||0)){save.best[S.diffId]=S.day;persist()}
 }
@@ -2352,7 +2363,7 @@ function resetRun(fresh){
   Object.assign(save,{money:2000000,iq:2,slots:4,ringE:false,ownV:{xeso:true},vehicle:'xeso',owned:{},eq:{}});persist();
   const D=S.D,tr=newTraits(),g=G.you;S.rep=newRep();S.secShown={};S.tutFree=false;S.pv=null;
   Object.assign(S,{lives:D.lives,maxLives:D.lives,day:1,married:false,traits:tr.traits,learned:tr.learned,notes:tr.notes,
-    aff:40,stale:null,mood:null,lastMood:null,crave:null,streak:0,right:0,alive:true,nextChange:ri(25,35),
+    aff:40,kn:80,work:null,overReason:null,knPrev:null,stale:null,mood:null,lastMood:null,crave:null,streak:0,right:0,alive:true,nextChange:ri(25,35),
     look:{hs:pick(g==='F'?HAIRS_F:HAIRS_M),hair:ri(0,4),top:ri(0,5),glasses:false,earring:false,lip:false},
     lookChange:null,milestone:null,catHist:[],usedTraps:[],pendingMsg:null,countdown:null,choosing:null,lastBtns:null,log:[],
     cool:{},seenSets:{},used:{},dateNo:0,fightYesterday:false,cam:null,venue:null,homeVar:null,startDate:(()=>{const t=new Date();t.setHours(0,0,0,0);t.setDate(t.getDate()+ri(0,90));return t.getTime()})(),bday:{day:ri(35,330)},bdayHintDay:ri(3,14),bdayHinted:false,bdayHint2:false,metParents:false,parentsRetry:0,marriedDay:0,endY1:false,endY5:false,solo:false,parExpr:'neutral',parName:'',today:{right:0,total:0,aff:0,spent:0,photo:null,ended:false}});
@@ -2364,7 +2375,7 @@ async function overChoice(){
   const id=RUN;
   const r=await new Promise(res=>{
     const box=$('#dialog');box.innerHTML='';const c=document.createElement('div');c.className='card';
-    c.innerHTML='<p class="eyebrow"></p><h2></h2><p></p>';c.children[0].textContent=DIFFS[S.diffId].name+' · Hết mạng';c.children[1].textContent=T('{P} đã chia tay {M}');
+    c.innerHTML='<p class="eyebrow"></p><h2></h2><p></p>';c.children[0].textContent=DIFFS[S.diffId].name+' · '+(S.overReason==='kn'?'Hết kiên nhẫn':'Hết mạng');c.children[1].textContent=T(S.overReason==='kn'?'{P} không chờ được nữa':'{P} đã chia tay {M}');
     c.children[2].textContent=S.profile?T('Người thật ngoài đời chắc sẽ dễ tính hơn... Làm lại với {P} nhé?'):S.married?'Cưới nhau rồi mà vẫn chưa hiểu "gì cũng được" là gì.':'Làm lại với '+herWord()+' ở một vũ trụ khác, hay làm quen một người mới?';
     const st=document.createElement('div');[['Bên nhau',S.day+' ngày'],['Kỷ lục',(save.best[S.diffId]||0)+' ngày'],['Đoán trúng ý',S.right+' lần'],['Thiện cảm cuối',S.aff+'']].forEach(([a,b])=>{const d=document.createElement('div');d.className='stat';d.innerHTML='<span></span><b></b>';d.firstChild.textContent=a;d.lastChild.textContent=b;st.appendChild(d)});c.appendChild(st);
     const s=document.createElement('div');s.className='stack';
@@ -2380,7 +2391,7 @@ async function runGame(resumed){
     if(!resumed)saveRun();
     for(;;){
       for(;;){
-        await playDate();chk(id);
+        await playDateW();chk(id);
         if(!S.alive)break;
         await endOfDay();chk(id);
         await advanceDays();chk(id);updHUD();
@@ -3223,6 +3234,201 @@ function stHint(code,clear){const H=HINTS[code];if(!H)return null;const sl=S.slo
 function moodHint(m){const c=clr(),i=MOODS.indexOf(m);return(i>=0&&stHint('MO'+hpad(i+1),c===0))||m.msg[c]}
 function craveHint(cv,clear){const i=CRAVES.indexOf(cv);return(i>=0&&stHint('CR'+hpad(i+1),clear))||cv.txt[clear?0:1]}
 function traitHint(k){const c=clr(),i=Object.keys(TRAITS).indexOf(k);return(i>=0&&stHint('TR'+hpad(i+1),c===0))||TRAITS[k].hint[c]}
+
+/* ---------- v1.6: LUỒNG CÔNG VIỆC (BitLife) — giai đoạn 1 ----------
+   Dữ liệu dạng CSV giống brief BRIEF-luong-cong-viec-GD1.md. Bản dưới là BỘ MẪU của Claude;
+   khi ChatGPT gửi 3 bảng thật thì thay thẳng nội dung WORK_CSV. */
+const WORK_CSV={su_kien:`id|loai|nguoi|dieu_kien|cau
+CV.TH.1|thuong|sep||{M} ơi, chiều nay nộp giúp anh bản tổng kết tuần nhé.
+CV.TH.2|thuong|dongnghiep||Ê {M}, file số liệu tuần này ông gửi chưa? / Tui cần gấp để chạy báo cáo.
+CV.TH.3|thuong|khach||Chào em, bên chị cần sửa lại báo giá trong hôm nay nhé.
+CV.TH.4|thuong|dongnghiep||{M} ơi trưa nay đi ăn chung không? Team mới có bạn mới vào.
+CV.TH.5|thuong|sep|ct>=60|Dạo này nhìn em mệt đó {M}. Ổn không?
+CV.TC.1|tangca|sep|hen=o|{M} ơi, {slot} ở lại xử lý báo cáo với anh nhé. / Gấp lắm.
+CV.TC.2|tangca|sep|hen=o|Hệ thống gặp sự cố. / {slot} cả team phải ở lại tới khi xong.
+CV.TC.3|tangca|dongnghiep|hen=t|{M} ơi, trưa nay trực giúp tui chút được không? Tui có việc nhà gấp.
+CV.DL.1|deadline|sep||Mai 9 giờ họp với khách. Slide của em xong chưa {M}?
+CV.DL.2|deadline|hr||Nhắc {M}: hôm nay là hạn cuối nộp bản tự đánh giá quý nhé.
+CV.CH.1|coho|sep||Công ty mở dự án mới, anh muốn đề cử em làm phó nhóm. Em nhận không?
+CV.CH.2|coho|hr|hs>=60|Tháng này em được bình chọn nhân viên chăm chỉ, có thưởng nóng nhé {M}!
+CV.GY.1|goiy|dongnghiep|chuacuoi|Bạn gái tui học chung với {P} nè. / Nghe nói {P} {GOIY}.
+CV.GY.2|goiy|dongnghiep||Hôm qua tui gặp {P} ở chỗ làm của bạn tui. / Nghe kể {P} {GOIY} đó, ông biết chưa?
+CV.TL.1|thangchuc|sep||Chúc mừng {M}! Từ tuần sau em lên {LV}. / Lương mới áp dụng luôn nhé.
+CV.BD.1|biduoi|hr||{M} ơi, công ty rất tiếc phải chấm dứt hợp đồng với em. / Em bàn giao công việc trong hôm nay nhé.
+CV.XV.1|xinviec|hr||Chào {M}, bên chị mời em phỏng vấn vị trí nhân viên văn phòng sáng nay nhé.`,
+lua_chon:`id|su_kien|kieu|nhan|hieu_qua|phan_hoi
+CV.TH.1.a|CV.TH.1|cham|Dạ, em làm ngay trong buổi sáng.|HS+5 QH+2 CT+5|Tốt, anh chờ.
+CV.TH.1.b|CV.TH.1|ne|Em gửi cuối ngày được không anh?|HS-1 CT-2|Ừ, đừng quá 6 giờ.
+CV.TH.1.c|CV.TH.1|khon|Em gửi bản nháp trước, chiều chỉnh xong.|HS+3 QH+1 CT+3|Ok, cách làm hay đó.
+CV.TH.2.a|CV.TH.2|cham|Gửi liền nè, tui làm thêm phần biểu đồ luôn.|HS+3 QH+4 CT+4|Ông là số một!
+CV.TH.2.b|CV.TH.2|ne|Chiều tui gửi nha, sáng tui kẹt.|QH-3|Ờ… nhanh giùm nha.
+CV.TH.2.c|CV.TH.2|khon|Tui gửi bản thô trước, ông chạy thử đi.|HS+1 QH+2 CT+1|Được, cảm ơn nha.
+CV.TH.3.a|CV.TH.3|cham|Dạ em sửa ngay, gửi chị trong 1 tiếng.|HS+5 QH+2 CT+6 TIEN+100000|Cảm ơn em, làm nhanh ghê.
+CV.TH.3.b|CV.TH.3|ne|Dạ chiều mai em gửi chị được không ạ?|HS-3 QH-2|Ừm… chị hơi gấp đó em.
+CV.TH.3.c|CV.TH.3|khon|Em gửi phần chính trước, chiều gửi đủ ạ.|HS+2 CT+3|Được, chị chờ.
+CV.TH.4.a|CV.TH.4|khon|Đi chứ, làm quen luôn.|QH+5 CT-3 HS-1|Hay quá, 12 giờ dưới sảnh nha.
+CV.TH.4.b|CV.TH.4|cham|Hôm nay tui ăn nhanh tại bàn thôi.|HS+2 QH-2|Ờ, bữa khác nha.
+CV.TH.5.a|CV.TH.5|ne|Dạ, chắc em xin nghỉ nửa buổi chiều.|CT-12 HS-3|Ừ, nghỉ cho khỏe rồi quay lại.
+CV.TH.5.b|CV.TH.5|cham|Dạ em ổn, em làm tiếp được.|HS+3 CT+5|Đừng cố quá nhé.
+CV.TC.1.a|CV.TC.1|cham|Dạ, em ở lại làm cho xong.|HS+6 QH+3 CT+10 KN-8 TRE+40|Tốt. Anh ghi nhận.
+CV.TC.1.b|CV.TC.1|ne|Em có hẹn rồi, sáng mai em làm sớm nha anh.|HS-2 QH-4 CT+2|Ừ… lần này thôi đó.
+CV.TC.1.c|CV.TC.1|khon|Em làm nhanh phần chính, phần còn lại gửi trước 10 giờ.|HS+3 CT+6 KN-3 TRE+15|Được, nhớ đúng giờ.
+CV.TC.2.a|CV.TC.2|cham|Dạ em ở lại, em báo hủy hẹn.|HS+8 QH+5 CT+12 KN-15 HUY|Cảm ơn em, vụ này anh nhớ công em.
+CV.TC.2.b|CV.TC.2|khon|Em ở lại 1 tiếng rồi làm tiếp ở nhà được không anh?|HS+3 QH+1 CT+8 KN-5 TRE+60|Ừ, nhớ online nhé.
+CV.TC.2.c|CV.TC.2|ne|Em xin về đúng giờ, tối nay em có việc quan trọng.|HS-4 QH-6|…Ừ. Anh sẽ nhớ chuyện này.
+CV.TC.3.a|CV.TC.3|cham|Ok, ông cứ đi đi, tui trực cho.|QH+6 CT+5 KN-5 TRE+30|Cứu tinh! Tui nợ ông bữa nước.
+CV.TC.3.b|CV.TC.3|ne|Trưa nay tui có hẹn rồi, ông hỏi người khác thử nha.|QH-3|Ờ, để tui hỏi thử.
+CV.DL.1.a|CV.DL.1|cham|Dạ em làm xuyên đêm nay cho xong.|HS+7 CT+12 KN-4|Tốt, nhưng đừng để trễ giờ họp.
+CV.DL.1.b|CV.DL.1|khon|Dạ còn phần số liệu, trưa nay em hoàn thiện.|HS+3 CT+6|Ok, gửi anh xem trước 3 giờ.
+CV.DL.1.c|CV.DL.1|ne|Dạ em xin dời qua chiều mai được không anh?|HS-5 QH-4 CT-2|Không dời được đâu em.
+CV.DL.2.a|CV.DL.2|cham|Dạ em nộp ngay trong sáng nay.|HS+3 QH+2 CT+3|Cảm ơn em.
+CV.DL.2.b|CV.DL.2|ne|Dạ em quên mất, cuối ngày em nộp.|HS-2 CT+2|Nhớ đúng hạn nhé.
+CV.CH.1.a|CV.CH.1|cham|Dạ em nhận, cảm ơn anh tin tưởng.|HS+8 QH+4 CT+10 KN-3|Tốt lắm, cố lên nhé.
+CV.CH.1.b|CV.CH.1|ne|Dạ em xin dịp khác, dạo này em hơi quá tải.|CT-3 QH-2|Ừ, anh hiểu.
+CV.CH.2.a|CV.CH.2|khon|Dạ em cảm ơn ạ!|QH+2 CT-3 TIEN+500000|Chúc mừng em!
+CV.GY.1.a|CV.GY.1|khon|Thật hả? Cảm ơn nha, tui nhớ rồi.|QH+2|Có gì đâu, nhớ khao tui ly nước.
+CV.GY.2.a|CV.GY.2|khon|Ờ ha, cảm ơn ông báo tin.|QH+2|Người yêu mà, để ý chút nha.
+CV.TL.1.a|CV.TL.1|khon|Dạ em cảm ơn anh, em sẽ cố gắng hơn.|QH+3 CT-5|Xứng đáng mà.
+CV.BD.1.a|CV.BD.1|ne|Dạ… em hiểu rồi.|CT+10|Chúc em sớm tìm được công việc mới.
+CV.XV.1.a|CV.XV.1|cham|Dạ em sẽ tới sớm 15 phút.|HS+5 CT+3|Chúc mừng, em được nhận! Mai đi làm nhé.
+CV.XV.1.b|CV.XV.1|khon|Dạ em tới đúng giờ ạ.||Bên chị báo luôn: em được nhận rồi nhé!`,
+kien_nhan:`id|tinhcach|muc|cau
+KN.CS.vua.1|CS|vua|Dạo này bận quá ha.
+KN.CS.thap.1|CS|thap|Nhắn tin trả lời như trả bài. Chán.
+KN.CS.nguy.1|CS|nguy|Còn muốn quen nữa không? Nói thẳng.
+KN.CS.hoi.1|CS|hoi|Vậy mới được.
+KN.NN.vua.1|NN|vua|Dạo này {a} ít nhắn cho {e} ghê á~
+KN.NN.thap.1|NN|thap|{E} nhớ {a} mà {a} cứ bận hoài à…
+KN.NN.nguy.1|NN|nguy|{E} thấy mình như người thừa trong lịch của {a} vậy.
+KN.NN.hoi.1|NN|hoi|Hihi dạo này {a} ngoan ghê~
+KN.KK.vua.1|KK|vua|Bận lắm à? Không sao, {e} cũng bận.
+KN.KK.thap.1|KK|thap|Chắc công việc quan trọng hơn {e} rồi.
+KN.KK.nguy.1|KK|nguy|{E} không quen chờ ai lâu vậy đâu.
+KN.KK.hoi.1|KK|hoi|Biết điều hơn rồi đó.
+KN.SS.vua.1|SS|vua|Ngày không có tin {a} dài lê thê.
+KN.SS.thap.1|SS|thap|Trái tim {e} đợi mãi cũng biết mỏi.
+KN.SS.nguy.1|SS|nguy|Có lẽ {e} nên tập quen với khoảng trống này.
+KN.SS.hoi.1|SS|hoi|Có {a} bên cạnh, mọi thứ lại ấm như cũ.
+KN.BT.vua.1|BT|vua|Dạo này {a} bận nhiều ha.
+KN.BT.thap.1|BT|thap|{E} vẫn ở đây. Chỉ là ít khi thấy {a}.
+KN.BT.nguy.1|BT|nguy|{E} nghĩ mình cần nói chuyện nghiêm túc.
+KN.BT.hoi.1|BT|hoi|Dạo này vui hơn. Cảm ơn {a}.
+KN.LL.vua.1|LL|vua|Người yêu {e} đang bị công ty bắt cóc hả?
+KN.LL.thap.1|LL|thap|{E} tính gửi đơn xin lịch hẹn qua phòng nhân sự của {a} luôn đó.
+KN.LL.nguy.1|LL|nguy|Nói thật, {e} hết muốn đùa rồi.
+KN.LL.hoi.1|LL|hoi|Chào mừng người yêu quay lại hệ thống :))`};
+function csvRows(t){const L=t.trim().split('\n'),h=L[0].split('|');return L.slice(1).map(l=>{const p=l.split('|');const o={};h.forEach((k,i)=>o[k]=(p[i]||'').trim());return o})}
+const WK={ev:csvRows(WORK_CSV.su_kien),ch:csvRows(WORK_CSV.lua_chon),kn:csvRows(WORK_CSV.kien_nhan)};
+WK.chOf=id=>WK.ch.filter(c=>c.su_kien===id);
+const LV_NAME=['Nhân viên','Nhân viên chính','Trưởng nhóm','Phó phòng','Trưởng phòng'];
+const LV_PAY=[250000,330000,430000,560000,730000];
+const KN_MULT={cucsuc:[.8,.8],nhongnheo:[1.4,1.4],kieuky:[1.1,.9],sen:[1.2,1.2],binhthan:[.9,1],laylo:[1,1.1]}; // [giảm, hồi]
+const WK_ICON={cham:'💪',ne:'💗',khon:'🧠'};
+const SENDER={sep:()=>'Sếp '+S.work.boss,dongnghiep:()=>S.work.co,khach:()=>'Khách hàng',hr:()=>'Phòng nhân sự'};
+FEATS.work={d:3,t:'Công việc',x:'Từ hôm nay sếp, đồng nghiệp, khách hàng sẽ nhắn tin. Chọn cách xử lý: 💪 chăm việc thì lương cao, dễ thăng chức; 💗 ưu tiên người yêu thì người yêu vui. Để ý thanh ⏳ Kiên nhẫn trên cùng: về 0 là người yêu bỏ đi. Căng thẳng cao thì gợi ý của người yêu khó hiểu hơn.'};
+RUN_KEYS.push('kn','work','overReason');
+function workInit(){
+  if(S.kn==null)S.kn=80;
+  if(!S.work)S.work={lv:1,hs:50,qh:50,ct:20,unemp:false,unempUntil:0,nextReview:S.day+ri(12,18),boss:pick(['Hùng','Tuấn','Dũng','Phong']),co:pick(['Khoa','Nam','Vy','Linh']),used:{}};
+}
+function workOn(){return feat('work')}
+function knHidden(){return pKey()==='binhthan'}
+function knAdd(n){if(!n)return;const m=KN_MULT[pKey()]||[1,1];S.kn=clamp(Math.round(S.kn+n*(n<0?m[0]:m[1])),0,100);updHUD()}
+function workPay(){workInit();const W=S.work;if(W.unemp)return 0;return Math.round((LV_PAY[W.lv-1]+Math.max(0,W.hs-60)*3000)*(S.married?1.4:1)/1000)*1000}
+function workRows(){if(!workOn())return[];const W=S.work;return[['Công việc',W.unemp?'Đang tìm việc':LV_NAME[W.lv-1]+' · Hiệu suất '+W.hs],['Căng thẳng',W.ct+(W.ct>=70?' 😵':'')],['Kiên nhẫn',knHidden()?'?':S.kn+'']]}
+function wkCond(c){if(!c)return true;const W=S.work;return c.split(';').every(x=>{x=x.trim();if(!x)return true;
+  if(x==='cuoi')return S.married;if(x==='chuacuoi')return!S.married;
+  let m=x.match(/^hen=(.+)$/);if(m)return m[1].split('|').includes(S.slot);
+  m=x.match(/^(lv|ct|hs|qh)(>=|<=)(\d+)$/);if(m){const v=W[m[1]],n=+m[3];return m[2]==='>='?v>=n:v<=n}return true})}
+function wkText(s){const W=S.work;let gy='';
+  if(/\{GOIY\}/.test(s)){const cand=S.traits.filter(t=>!S.learned.has(t));const k=pick(cand.length?cand:S.traits);gy=TRAITS[k].note.charAt(0).toLowerCase()+TRAITS[k].note.slice(1);S.work.lastGoiy=k}
+  return T(s.replace(/\{S\}/g,W.boss).replace(/\{D\}/g,W.co).replace(/\{LV\}/g,LV_NAME[Math.min(W.lv,5)-1]).replace(/\{GOIY\}/g,gy))}
+function wkPick(types){const L=WK.ev.filter(e=>types.includes(e.loai)&&wkCond(e.dieu_kien)&&WK.chOf(e.id).length);
+  if(!L.length)return null;const u=S.work.used,fresh=L.filter(e=>u[e.id]==null||S.day-u[e.id]>=10);const e=pick(fresh.length?fresh:L);u[e.id]=S.day;return e}
+function fxText(fx){const N={HS:'Hiệu suất',QH:'Quan hệ',CT:'Căng thẳng',KN:'Kiên nhẫn'},o=[];
+  (fx||'').split(/\s+/).forEach(t=>{let m=t.match(/^(HS|QH|CT|KN)([+-]\d+)$/);if(m){o.push(N[m[1]]+' '+(m[1]==='KN'&&knHidden()?(+m[2]<0?'↓':'↑'):m[2].replace('-','−')));return}
+    m=t.match(/^TIEN([+-]\d+)$/);if(m){o.push((+m[1]>0?'+':'−')+fmtS(Math.abs(+m[1])));return}
+    m=t.match(/^TRE\+(\d+)$/);if(m){o.push('Trễ hẹn '+m[1]+' phút');return}
+    if(t==='HUY')o.push('Phải hủy hẹn')});return o.join(' · ')}
+function applyFx(fx){const W=S.work;let huy=false;
+  (fx||'').split(/\s+/).forEach(t=>{let m=t.match(/^(HS|QH|CT)([+-]\d+)$/);if(m){const k=m[1].toLowerCase();W[k]=clamp(W[k]+(+m[2]),0,100);return}
+    m=t.match(/^KN([+-]\d+)$/);if(m){knAdd(+m[1]);return}
+    m=t.match(/^TIEN([+-]\d+)$/);if(m){save.money+=(+m[1]);persist();return}
+    m=t.match(/^TRE\+(\d+)$/);if(m){S.today.late=(S.today.late||0)+(+m[1]);return}
+    if(t==='HUY')huy=true});
+  updHUD();return huy}
+function workRing(name){const r=$('#ring'),ic=r.querySelector('.ic');ic.textContent='💼';$('#ringWho').textContent=name;r.hidden=false;sfx.ping();
+  const iv=setInterval(()=>{if(!paused)sfx.ping()},1600);
+  return new Promise(res=>{const done=()=>{clearInterval(iv);r.hidden=true;ic.textContent='📱';res()};r.onclick=()=>{sfx.tap();done()};pend.push(done)})}
+async function workChat(ev){
+  const id=RUN,ph=$('#phone'),chat=$('#phChat'),who=SENDER[ev.nguoi]?SENDER[ev.nguoi]():'Công ty';
+  chat.innerHTML='';$('#phName').textContent=who;$('#phAv').textContent='💼';$('#phGo').hidden=true;
+  const d=document.createElement('div');d.className='ph-date';d.textContent='Ngày '+S.day+' · '+fmtClock(S.clock);chat.appendChild(d);
+  await workRing(who);chk(id);ph.hidden=false;
+  const bub=async(txt,cls)=>{if(cls==='in'){const t=document.createElement('div');t.className='typing';t.innerHTML='<i></i><i></i><i></i>';chat.appendChild(t);chat.scrollTop=1e6;await wait(500+txt.length*7,true);chk(id);t.remove()}
+    const b=document.createElement('div');b.className='b '+cls;b.textContent=txt;chat.appendChild(b);chat.scrollTop=1e6;if(cls==='in')sfx.ping();await wait(350,true);chk(id)};
+  for(const x of ev.cau.split(' / '))await bub(wkText(x),'in');
+  const chs=WK.chOf(ev.id);const box=$('#phRep');box.innerHTML='';box.hidden=false;
+  chs.forEach(c=>{const b=document.createElement('button');b.className='qr';b.innerHTML='<i></i><span></span>';b.firstChild.textContent=WK_ICON[c.kieu]||'•';b.lastChild.textContent=wkText(c.nhan);box.appendChild(b)});
+  chat.scrollTop=1e6;
+  const i=await new Promise(res=>{[...box.children].forEach((b,j)=>b.onclick=()=>{sfx.tap();res(j)});pend.push(()=>res(0))});chk(id);
+  box.hidden=true;box.innerHTML='';const c=chs[i];
+  await bub(wkText(c.nhan),'out');logLine('me',wkText(c.nhan),'msg');
+  if(c.phan_hoi)await bub(wkText(c.phan_hoi),'in');
+  const huy=applyFx(c.hieu_qua);
+  const fx=fxText(c.hieu_qua);if(fx){const r=document.createElement('div');r.className='ph-date wkfx';r.textContent=fx;chat.appendChild(r);chat.scrollTop=1e6}
+  const go=$('#phGo');go.textContent='Xong';go.hidden=false;
+  await new Promise(r=>{go.onclick=()=>{sfx.tap();r()};pend.push(r)});chk(id);
+  ph.hidden=true;return{c,huy};
+}
+async function workDay(){
+  const id=RUN;workInit();if(!workOn()||!S.alive)return;
+  await newFeature('work');chk(id);updHUD();
+  const W=S.work;let ev=null;
+  if(W.unemp){if(S.day<W.unempUntil)return;ev=wkPick(['xinviec'])}
+  else if(S.day>=W.nextReview){W.nextReview=S.day+ri(12,18);
+    if(W.hs<=15||W.qh<=10)ev=wkPick(['biduoi']);
+    else if(W.hs>=75&&W.qh>=50&&W.lv<5){W.lv++;ev=wkPick(['thangchuc'])}}
+  if(!ev&&rand()<.7){const r=rand(),t=r<.45?['thuong']:r<.65?['tangca']:r<.8?['deadline']:r<.92?['coho']:['goiy'];ev=wkPick(t)||wkPick(['thuong'])}
+  if(!ev)return;
+  const {huy}=await workChat(ev);chk(id);
+  if(ev.loai==='biduoi'){W.unemp=true;W.unempUntil=S.day+ri(3,6);W.lv=1;W.hs=45;W.qh=50;await say('narr',T('{M} bị cho nghỉ việc. Mấy ngày tới không có lương.'),{hold:900});chk(id)}
+  if(ev.loai==='xinviec'){W.unemp=false;W.nextReview=S.day+ri(12,18);await say('narr',T('{M} có việc mới, lại làm Nhân viên từ đầu.'),{hold:800});chk(id)}
+  if(ev.loai==='thangchuc'){sfx.ok();floatText('Lên '+LV_NAME[W.lv-1]+'!')}
+  if(huy){
+    if(S.married){S.today.late=(S.today.late||0)+60;addAff(-4)}
+    else{addAff(-6);S.today.skipped=true;S.today.ended=true;S.today.workHuy=true;
+      await say('narr',T('{M} nhắn {P} xin hủy hẹn vì công việc. {P} chỉ trả lời một chữ "Ừ".'),{hold:1000});chk(id)}
+  }
+  if(S.kn<=0)await knBreak();
+}
+function knLevel(){return S.kn<20?'nguy':S.kn<40?'thap':S.kn<70?'vua':null}
+function knLine(){if(!workOn())return null;const code=PCODE[pKey()]||'NN';let lv=knLevel();
+  if(S.knPrev!=null&&S.kn-S.knPrev>=8&&S.kn>=50)lv='hoi';S.knPrev=S.kn;
+  if(!lv)return null;const p={vua:.4,thap:.7,nguy:1,hoi:.8}[lv];if(rand()>p)return null;
+  const L=WK.kn.filter(k=>k.tinhcach===code&&k.muc===lv).map(k=>[k.id,k.cau]);const x=pkId('kn',L);return x?T(x[1]):null}
+async function knBreak(){const id=RUN;if(!S.alive)return;
+  S.expr='sad';S.overReason='kn';
+  await say('narr',T('{P} gửi một tin nhắn dài.'),{hold:700});chk(id);
+  await say('you',T('{A} cứ lo công việc đi. {E} mệt vì phải chờ rồi. Mình dừng lại nha.'),{hold:1200});chk(id);
+  S.alive=false}
+async function playDateW(){
+  const id=RUN;workInit();
+  await playDate();chk(id);if(!S.alive)return;
+  if(!workOn())return;
+  const t=S.today||{};let d=0;const W=S.work;
+  if(t.skipped&&!t.workHuy)d-=10;
+  else if(!t.skipped&&!t.ended){d+=t.total&&t.right===t.total?2:0;W.ct=clamp(W.ct-6,0,100)}
+  else if(t.ended)d-=3;
+  if(t.late>=15)d-=Math.min(8,Math.round(t.late/10));
+  if(t.gift&&t.gift!=='none')d+=2;
+  knAdd(d);W.ct=clamp(W.ct-2,0,100);
+  if(S.kn<=0)await knBreak();
+}
+function workIdle(n){if(!workOn()||n<=0)return;workInit();S.work.ct=clamp(S.work.ct-2*n,0,100)}
+function updWorkHUD(){const el=$('#hKn');if(!el)return;const on=S.alive&&workOn()&&S.kn!=null;$('#hKnWrap').hidden=!on;if(!on)return;
+  const hid=knHidden();el.textContent=hid?'?':S.kn;$('#hKnBar').style.setProperty('--w',(hid?100:S.kn)+'%');$('#hKnWrap').classList.toggle('hid',hid);$('#hKnWrap').classList.toggle('low',!hid&&S.kn<30);
+  const sc=$('#hStress');if(sc)sc.hidden=!(S.work&&S.work.ct>=70)}
 
 /* ---------- v1.5.4: tin nhắn có qua có lại, dữ liệu gói thoại 7k ----------
    NY mở lời → MÌNH chọn 1 trong 3 (💗 tình cảm / 😜 trêu / 👉 vào việc) → NY đáp đúng ý câu mình chọn
